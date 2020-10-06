@@ -1,0 +1,33 @@
+---
+title: "STA304 A2Group 21"
+author: "Yingshi Wang"
+date: "10/6/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. A political party: Liberal Party
+2. A geographic focus: Ontario
+3. Survey methodology:
+  • What is the population, frame, and sample?
+  Population: a Canadian citizen aged 18 or older on election day and provide acceptable proof of identity and address.
+  Frame: Gender
+  • What sampling methods will you use and why? What are some of the statistical properties that the method brings to the table?
+  Stratified Sampling
+  • How are you going to reach your desired respondents?
+  Online survey
+  • How much do you estimate this will cost?
+  Survey Monkey cost
+  • What steps will you take to deal with non-response and how will non-response affect your survey?
+  According to percentage of non-response, we have different data imputation
+  • How are you going to protect respondent privacy?
+  
+  
+Develop a survey. 
+• Are you 18 or older on election day
+• What is your gender?
+• 
+
