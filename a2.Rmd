@@ -24,10 +24,25 @@ knitr::opts_chunk$set(echo = TRUE)
   • What steps will you take to deal with non-response and how will non-response affect your survey?
   According to percentage of non-response, we have different data imputation
   • How are you going to protect respondent privacy?
-  
-  
-Develop a survey. 
-• Are you 18 or older on election day
-• What is your gender?
-• 
+
+```{r}
+set.seed(123456)
+#Are you eligible and registered to vote at your current address you living at?(Yes=1/No=1)
+Q1<-sample(0:1,size=500,replace=TRUE)
+# What is your gender?(Male=1/Female=2/Other=3)
+Q2<-sample(1:3,size=500,replace=TRUE)
+# Do you think marijuana legalization should be allowed?  Completely agree=1, somewhat agree=2,neutrally=3,somewhat disagree=4, completely disagree=5
+Q3<-sample(1:5,size=500,replace=TRUE)
+#In general, what do you think about loosened the rules for refugee?(1-5)
+Q4<-sample(1:5,size=500,replace=TRUE)
+# Do you think everyone should be permitted to possess guns? Yes=1,No=0
+Q5<-sample(0:1,size=500,replace=TRUE)
+# Do you agree with environmental safety is one of the priorities to Canada? 1-5
+Q6<-sample(1:5,size=500,replace=TRUE)
+# Which party are you going to vote on Election Day? 1- Liberal 2-Political 3-Quec 4-Green 5-Conservative
+Q7 <- sample(1:5,size=500,replace=TRUE)
+
+data <- data.frame(Q1,Q2,Q3,Q4,Q5,Q6,Q7)
+plot(Q7)
+```
 
