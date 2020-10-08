@@ -30,8 +30,8 @@ library(ggplot2)
 
 ```{r}
 set.seed(123456)
-#Are you eligible and registered to vote at your current address you living at?(Yes=1/No=1)
-if.eligible <- rbernoulli(1000, p = 0.9) 
+#Are you eligible and registered to vote at your current address you living at?
+if.eligible <- rbernoulli(1000, p = 0.95) 
 if.eligible <- ifelse(if.eligible == TRUE, 'Yes','No')
 ```
 
@@ -39,9 +39,8 @@ if.eligible <- ifelse(if.eligible == TRUE, 'Yes','No')
 #Q2 What is your gender?
 Sex <- rbernoulli(1000, p = 0.5) 
 Sex <- ifelse(Sex == TRUE, 'Male','Female')
+
 ```
-
-
 
 ```{r}
 #Q3 What is the highest level of education you have completed?
@@ -51,7 +50,6 @@ data <- data.frame(if.eligible)
 data$edu <- NA
 num.yes <- nrow(data[data$if.eligible == 'Yes',])
 num.no <- nrow(data[data$if.eligible == 'No',])
-
 edu.yes <- sample(edu, num.yes, replace = TRUE, prob = c(0,0.104, 0.245, 0.306, 0.345))
 edu.no <- sample(edu, num.no, replace = TRUE, prob = c(0.19,0.81, 0, 0, 0))
 data[data$if.eligible == 'Yes', "edu"] <- edu.yes
@@ -61,26 +59,25 @@ data[data$if.eligible == 'No', "edu"] <- edu.no
 
 
 ```{r}
-# Q3 Do you think marijuana legalization should be allowed?  Completely agree=1, somewhat agree=2,neutrally=3,somewhat disagree=4, completely disagree=5
+# Q4 Do you think marijuana legalization should be allowed?
 # https://abacusdata.ca/canadians-are-ready-for-legal-cannabis/
 marijuana <- c("Completely agree","somewhat agree", "neutrally", "somewhat disagree","completely disagree")
 marijuana <-sample(marijuana,size=1000,prob=c(0.25,0.21,0.24,0.12,0.18),replace=TRUE)
 ```
 
 ```{r}
-#Q4 In general, what do you think about loosened the rules for refugee?(1-5)
+#Q5 In general, what do you think about loosened the rules for refugee?
 #https://www.cicnews.com/2019/04/majority-of-canadians-maintain-positive-views-of-immigration-new-survey-finds-0412240.html#gs.i5mh19
 refugee <- c("Completely agree","somewhat agree", "neutrally", "somewhat disagree","completely disagree")
 refugee<-sample(refugee,size=1000,replace=TRUE,prob=c(0.2,0.25,0.35,0.12,0.08))
 ```
 
 ```{r}
-#Q5 Do you think everyone should be permitted to possess guns? Yes=1,No=0
+#Q6 Do you think everyone should be permitted to possess guns? 
 data$Sex <- Sex
 data$Gun <- NA
 n.male <- nrow(data[data$Sex == 'Male',])
 n.female <- nrow(data[data$Sex == 'Female',])
-
 Gun <- c("Yes", "No")
 Gun_data_male <- sample(Gun, n.male, replace = TRUE, prob = c(0.1, 0.9))
 Gun_data_female <- sample(Gun, n.female, replace = TRUE, prob = c(0.05, 0.95))
@@ -91,17 +88,15 @@ ggplot(data, aes(x = Sex, fill = Gun)) + geom_bar()
 ```
 
 ```{r}
-#Q6 Do you agree with environmental safety is one of the priorities to Canada? 1-5
+#Q7 Do you agree with environmental safety is one of the priorities to Canada?
 Env <- c("Completely agree", "Somewhat agree", "Neutral", "Somewhat disagree", "Compeletely disagree")
 Env_data <- sample(Env, 1000, replace = TRUE, prob = c(0.6, 0.2, 0.1, 0.05, 0.05))
 ```
 
 
 ```{r}
-#Q7 Which party are you going to vote on Election Day? 1- Liberal 2-New Democratic Party 3-People's party 4-Green 5-Conservative
+#Q8 Which party are you going to vote on Election Day?
 party = c("Liberal Party", "NDP-New Democratic Party", "People's Party", "Green Party", "Conservative Party")
-# simulate the choice of vote using numerical value
-#data1$party_num = sample(1:5,size=1000,replace=TRUE, prob = c(0.415, 0.168, 0.016,0.062, 0.332))
 # simulate the choice of vote using string
 data$party_name = sample(party, size = 1000, replace=TRUE, prob = c(0.415, 0.168, 0.016,0.062, 0.332))
 ```
@@ -109,10 +104,12 @@ data$party_name = sample(party, size = 1000, replace=TRUE, prob = c(0.415, 0.168
 ```{r}
 data$marijuana <- marijuana
 data$refugee <- refugee
-ggplot(data, aes(x = if.eligible,fill=edu)) + geom_bar()
+data=subset(data,if.eligible=="Yes")
+
+ggplot(data, aes(x = if.eligible,fill=edu)) + geom_bar()+ ggtitle("Figure 1")
 ggplot(data, aes(marijuana)) +
   geom_bar(fill = "#4073D1AF") + ggtitle("Social acceptability on Cannabis legalization") 
 ggplot(data, aes(refugee)) +
-  geom_bar(fill = "#8473A4AB") + ggtitle("Canadian social acceptability on accepting more refugees")  
+  geom_bar(fill = "#8473A4AB") + ggtitle("Canadian social acceptability on accepting more refugees")
 ```
 
