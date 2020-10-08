@@ -98,7 +98,7 @@ Env_data <- sample(Env, 1000, replace = TRUE, prob = c(0.6, 0.2, 0.1, 0.05, 0.05
 #Q8 Which party are you going to vote on Election Day?
 party = c("Liberal Party", "NDP-New Democratic Party", "People's Party", "Green Party", "Conservative Party")
 # simulate the choice of vote using string
-data$party_name = sample(party, size = 1000, replace=TRUE, prob = c(0.415, 0.168, 0.016,0.062, 0.332))
+data$vote = sample(party, size = 1000, replace=TRUE, prob = c(0.415, 0.168, 0.016,0.062, 0.332))
 ```
 
 ```{r}
@@ -111,5 +111,6 @@ ggplot(data, aes(marijuana)) +
   geom_bar(fill = "#4073D1AF") + ggtitle("Social acceptability on Cannabis legalization") 
 ggplot(data, aes(refugee)) +
   geom_bar(fill = "#8473A4AB") + ggtitle("Canadian social acceptability on accepting more refugees")
+ggplot(data, aes(x = vote ,fill=marijuana)) + geom_bar()+ ggtitle("Figure 1")
 ```
 
