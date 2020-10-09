@@ -1,5 +1,5 @@
 ---
-title: "STA304 A2Group 21"
+title: "Impact of Policy on Election"
 author: "Yingshi Wang,Gancheng Luo,Yingyu Li,Jiachen Lu"
 date: "10/6/2020"
 output: pdf_document
@@ -216,3 +216,36 @@ In the recent four years, Canada's refugee policy has been front and center The 
 Perhaps there are a few weaknesses appear in this analysis. First, for the gender question in the survey, we only have two choices(male/female). Some participants may not willing to answer it for several reasons. Second, some of our questions are conductive, such as marijuana issue and refugees issue. These kind of questions are obviously point to some party and likely to receive biased responses. Third, our analysis lack of quantitative variables. That makes our report hard to observe tendency.
 
 What comes next is to make the choices of the survey more accurate(e.g. Add others/tend no to tell in gender question). Additionally, try to minimize the conductivity of the questions and be fair to all choices. Finally, add more numerical variables(e.g. Adding question such as age or average income). Use more variety of graphs to generate the report.
+
+\newpage
+
+# Appendix
+Github repo link: https://github.com/beryller/group21.com
+
+Survey link: https://www.surveymonkey.com/r/7FBLWDV
+
+# Reference
+
+Election Results(2019). Retrieved October 6, 2020, from https://enr.elections.ca/Provinces.aspx?lang=e
+
+Likert Scale(2020). Retrieved October 6, 2020, from https://en.wikipedia.org/wiki/Likert_scale
+
+Population of Canada by province and territory(2020). Retrieved October 6, 2020, from https://en.wikipedia.org/wiki/Population_of_Canada_by_province_and_territory
+
+Where Canada’s Political Parties Stand On Marijuana And Drugs Ahead Of The Election(2019). Retrieved October 6, 2020, from https://www.marijuanamoment.net/where-canadas-political-parties-stand-on-marijuana-and-drugs-ahead-of-the-election/
+
+Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
+
+Survey Screenshots:
+```{r pressure, echo=FALSE,  out.width = '100%'}
+knitr::include_graphics("s1.jpg")
+knitr::include_graphics("s2.png")
+knitr::include_graphics("price.jpg")
+
+```
+
+
+
+
+
+
