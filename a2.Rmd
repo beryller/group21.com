@@ -1,5 +1,5 @@
 ---
-title: "Impact of Policy on Election"
+title: "How Does Social Attitude on Policy Impact Parties Election"
 author: "Yingshi Wang,Gancheng Luo,Yingyu Li,Jiachen Lu"
 date: "10/6/2020"
 output: pdf_document
