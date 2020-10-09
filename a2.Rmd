@@ -1,6 +1,6 @@
 ---
 title: "STA304 A2Group 21"
-author: "Yingshi Wang"
+author: "Yingshi Wang,Gancheng Luo,Yingyu Li,Jiachen Lu"
 date: "10/6/2020"
 output: pdf_document
 ---
@@ -8,41 +8,235 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #install.packages("tidyverse")
+#install.packages("ggpubr")
 library(tidyverse)
 library(ggplot2)
+library(ggpubr)
 ```
 
-1. A political party: Liberal Party
-2. A geographic focus: Ontario
-3. Survey methodology:
-  • What is the population, frame, and sample?
-  Population: a Canadian citizen aged 18 or older on election day and provide acceptable proof of identity and address.
-  Frame: Gender
-  • What sampling methods will you use and why? What are some of the statistical properties that the method brings to the table?
-  Stratified Sampling
-  • How are you going to reach your desired respondents?
-  Online survey
-  • How much do you estimate this will cost?
-  Survey Monkey cost
-  • What steps will you take to deal with non-response and how will non-response affect your survey?
-  According to percentage of non-response, we have different data imputation
-  • How are you going to protect respondent privacy?
+# Abstract
+The policies that different political parties publish may affect the decision of the voters on the election. 
+In this paper, we analyze the votes of Liberal, Conservative, NDP_ New Democratic Party, Green Party, and People's 
+Party, which is the five main parties in Ontario, and voters' opinion of some of the policies. To see whether there
+ exists such a relation, we conduct an online survey to ask voters' views on some policies and parties they voted 
+ for during the 2019 Canadian Election. This paper found that in some aspects voters are more willing to vote for 
+ the party that shares an opinion of some policies. As an important part of democracy, election not only decides 
+ who to run the country but also affects the daily life of citizens. By showing the relationship of voters' opinions
+  and decisions, this paper could help the Liberal win more votes in the next election. Despite that we have 
+  detailed statistical analysis, our results might be limited due to finite resources when collecting the data. 
+  In the future, we could try to reach more respondents or optimize our sampling methodology
+to pick more representative samples.
 
-```{r}
+# Introduction
+In this paper, we use data from an online survey conducted through SurveyMonkey® (detailed procedure of data
+collection will be in the next section). Within the survey, we ask 1000 respondents about their education level, 
+views on guns, marijuana, refugee policies, and their final choices. Geographically, we focus on the citizens 
+living in Ontario since there are two main cities of Canada. One is the economy center: Toronto and the other 
+is the political center: Ottawa. Also, Ontario has the largest population proportion among the ten provinces 
+and three territories.
+
+Our first question asks about the eligibility of attending the 2019 election since it is possible some respondents 
+are not eligible for the vote. We use the R package "tidyverse" to filter these ineligible observations to make our 
+data more accurate. We also ask their opinion on gun possession, marijuana legalization, and refugee policy by 
+Likert scale, which is commonly used in all kinds of surveys. Then we draw several graphs to demonstrate the data 
+we collected by R package "ggplot2". We use bar charts to show respondents' different choices with respect to 
+their acceptability to the three main topics. We found that voters are generally neutral about the refugee policy. 
+As we know, Prime Minister Justin Trudeau from Liberal stands for the legalization of marijuana and he won the 2019
+ election. Similarly, we found that voters agree with marijuana legalization voted Liberal more than other parties. 
+ For gun possession, we did not find some significant relation to the parties.
+
+To some extent, this paper could help the Liberal establish policies that are supported by the citizens. This is 
+a kind of win-win relationship. The political party that wins the election could be in power, in this way they
+have access to resources and power to fulfill their political ideology. On the other hand, citizens sharing the 
+same ideas will be able to live in a society they long for. This is essential to democracy. Therefore, our study 
+is important to both the Liberal and the citizens.
+
+
+# Sampling Methodology
+We use Stratified Random Sampling for this study. Our population is Ontario citizens aged 18 or older on election
+ day and provide acceptable proof of identity and address. We choose this sampling technique is because the bais 
+ are low and samples can be more representative. The population is stratified by gender, which is the frame of our 
+ dataset. Within in the genders, we apply Simple Random Sampling to pick our samples. We conducted the survey by 
+ SurveyMonkey®, which is an online survey platform. Through the service provided by SurveyMonkey®, we can 
+ restrict the distribution to our desired respondents. SurveyMonkey® also provides an option to enforce 
+ respondents to finish to survey so in this way we will not get any non-response. What's more, SurveyMonkey® 
+ also provides online delivery so we do not have to reach the respondents ourselves. Our survey is anonymous 
+ and the privacy of respondents is protected by the privacy policy of SurveyMonkey®. These all sounds perfect 
+ but everything comes with a cost. The total cost of such a survey is CA$ 6440, given by SurveyMonkey®. 
+
+# Results
+
+```{r,echo=FALSE}
 set.seed(123456)
 #Are you eligible and registered to vote at your current address you living at?
 if.eligible <- rbernoulli(1000, p = 0.95) 
 if.eligible <- ifelse(if.eligible == TRUE, 'Yes','No')
 ```
 
-```{r}
+```{r,echo=FALSE}
+#Q2 What is your gender?
+Sex <- rbernoulli(1000, p = 0.5) 
+Sex <- ifelse(Sex == TRUE, 'Male','Female')
+```
+
+```{r,echo=FALSE}
+#Q3 What is the highest level of education you have completed?
+#https://www12.statcan.gc.ca/census-recensement/2016/dp-pd/hlt-fst/edu-sco/Table.cfm?Lang=E&T=11&Geo=00&SP=1&view=2&age=2&sex=1
+edu <- c("No certificate","less than high school degree", "high school degree or equivalent", "non-university certificate or diploma below bachelor level", "bachelor degree or highter")
+data <- data.frame(if.eligible)
+data$edu <- NA
+num.yes <- nrow(data[data$if.eligible == 'Yes',])
+num.no <- nrow(data[data$if.eligible == 'No',])
+edu.yes <- sample(edu, num.yes, replace = TRUE, prob = c(0,0.104, 0.245, 0.306, 0.345))
+edu.no <- sample(edu, num.no, replace = TRUE, prob = c(0.19,0.81, 0, 0, 0))
+data[data$if.eligible == 'Yes', "edu"] <- edu.yes
+data[data$if.eligible == 'No', "edu"] <- edu.no
+```
+
+```{r,echo=FALSE}
+# Q4 Do you think marijuana legalization should be allowed?
+# https://abacusdata.ca/canadians-are-ready-for-legal-cannabis/
+marijuana <- c("agree","disagree")
+marijuana <-sample(marijuana,size=1000,prob=c(0.7,0.3),replace=TRUE)
+```
+
+```{r,echo=FALSE}
+#Q5 In general, what do you think about loosened the rules for refugee?
+#https://www.cicnews.com/2019/04/majority-of-canadians-maintain-positive-views-of-immigration-new-survey-finds-0412240.html#gs.i5mh19
+refugee <- c("agree", "neutrally", "disagree")
+refugee<-sample(refugee,size=1000,replace=TRUE,prob=c(0.45,0.35,0.2))
+
+```
+
+```{r,echo=FALSE}
+#Q6 Do you think everyone should be permitted to possess guns? 
+data$Sex <- Sex
+data$Gun <- NA
+n.male <- nrow(data[data$Sex == 'Male',])
+n.female <- nrow(data[data$Sex == 'Female',])
+Gun <- c("Yes", "No")
+Gun_data_male <- sample(Gun, n.male, replace = TRUE, prob = c(0.1, 0.9))
+Gun_data_female <- sample(Gun, n.female, replace = TRUE, prob = c(0.05, 0.95))
+data[data$Sex == 'Male', "Gun"] <- Gun_data_male
+data[data$Sex == 'Female', "Gun"] <- Gun_data_female
+#ggplot(data, aes(x = Sex, fill = Gun)) + geom_bar()
+```
+
+```{r,echo=FALSE}
+#Q7 Do you agree with environmental safety is one of the priorities to Canada?
+Env <- c("Completely agree", "Somewhat agree", "Neutral", "Somewhat disagree", "Compeletely disagree")
+Env_data <- sample(Env, 1000, replace = TRUE, prob = c(0.6, 0.2, 0.1, 0.05, 0.05))
+```
+
+
+```{r,echo=FALSE}
+#Q8 Which party are you going to vote on Election Day?
+party = c("Liberal Party", "NDP-New Democratic Party", "Peoples Party", "Green Party", "Conservative Party")
+# simulate the choice of vote using string
+data$vote = sample(party, size = 1000, replace=TRUE, prob = c(0.415, 0.168, 0.016,0.062, 0.332))
+```
+
+The following table is our data, with 7 variables which are if the participant is eligible to vote, education level, sex, social acceptability on gun, marijuana and refugee, and which party people vote. 
+
+```{r,echo=FALSE}
+data$marijuana <- marijuana
+data$refugee <- refugee
+data=subset(data,if.eligible=="Yes")
+
+glimpse(data)
+```
+
+
+```{r,echo=FALSE}
+#creating table
+agree.liberal=nrow(data[data$refugee == 'agree'&data$vote == 'Liberal Party',])
+neutrally.liberal=nrow(data[data$refugee == 'neutrally'&data$vote == 'Liberal Party',])
+disagree.liberal=nrow(data[data$refugee == 'disagree'&data$vote == 'Liberal Party',])
+
+agree.conser=nrow(data[data$refugee == 'agree'&data$vote == 'Conservative Party',])
+neutrally.conser=nrow(data[data$refugee == 'neutrally'&data$vote == 'Conservative Party',])
+disagree.conser=nrow(data[data$refugee == 'disagree'&data$vote == 'Conservative Party',])
+
+agree.NDP=nrow(data[data$refugee == 'agree'&data$vote == 'NDP-New Democratic Party',])
+neutrally.NDP=nrow(data[data$refugee == 'neutrally'&data$vote == 'NDP-New Democratic Party',])
+disagree.NDP=nrow(data[data$refugee == 'disagree'&data$vote == 'NDP-New Democratic Party',])
+
+agree.Green=nrow(data[data$refugee == 'agree'&data$vote == 'Green Party',])
+neutrally.Green=nrow(data[data$refugee == 'neutrally'&data$vote == 'Green Party',])
+disagree.Green=nrow(data[data$refugee == 'disagree'&data$vote == 'Green Party',])
+
+agree.Peoples=nrow(data[data$refugee == 'agree'&data$vote == "Peoples Party",])
+neutrally.Peoples=nrow(data[data$refugee == 'neutrally'&data$vote == "Peoples Party",])
+disagree.Peoples=nrow(data[data$refugee == 'disagree'&data$vote == 'Peoples Party',])
+
+liberal = c(agree.liberal,neutrally.liberal,disagree.liberal) 
+Conservative = c(agree.conser,neutrally.conser,disagree.conser)
+NDP = c(agree.NDP,neutrally.NDP,disagree.NDP)
+Green = c(agree.Green,neutrally.Green,disagree.Green)
+People = c(agree.Peoples,neutrally.Peoples,disagree.Peoples)
+attitude = c("Agree","Neutrally","Disagree")
+a= round(84/(178+134+84),2)
+b= round(71/(118+143+71),2)
+c= round(27/(81+46+27),2)
+d= round(8/(24+20+8),2)
+e = round(4/(12),2)
+percet.disagree <- c("% of disagree",a,b,c,d,e)
+refugee.party <- data.frame(attitude,liberal,Conservative,NDP,Green,People)
+refugee.party<- rbind(refugee.party,percet.disagree)
+```
+
+```{r,echo=FALSE,fig.width = 12,fig.height = 7}
+ggplot(data, aes(x = if.eligible,fill=edu)) + geom_bar()+ ggtitle("Figure1 education levels of survey participants")
+```
+
+```{r,fig.width = 12,fig.height = 5.5, echo=FALSE}
+a= ggplot(data, aes(marijuana)) +
+  geom_bar(fill = "#4073D1AF") + ggtitle("Figure 2") 
+b= ggplot(data, aes(refugee)) +
+  geom_bar(fill = "#8473A4AB") + ggtitle("Figure 3")
+ggarrange(a, b + font("x.text", size = 10),
+                    ncol = 2, nrow = 1)
+ggplot(data, aes(x = vote ,fill=marijuana)) + geom_bar()+ ggtitle("Figure4:Parties votes with distribution of social acceptability on marijuana ")
+ggplot(data, aes(x = vote ,fill=refugee)) + geom_bar()+ ggtitle("Figure5: Parties votes with distribution of social acceptability on refugees")
+knitr::kable(refugee.party,caption = "Table1")
+```
+
+# Discussion 
+Our data clearly demonstrated that most of our samples have education levels which are higher than high school degree (See Figure 1). 
+
+In Figure 4, we discuss whether supporters from each party agree or not on marijuana legalization. Each poll represents the number of voters that support each corresponding party. The red-colored field represents the number of voters supporting marijuana legalization, and the blue-colored area represents the number of voters that do not support marijuana legalization. 
+Overall, regardless of which party they support, the majority of the voters from the sample population agree on legalizing marijuana. Also, the Liberal Party has the highest number of supporters and the majority of its supporters also agree on legalizing marijuana.  Furthermore, if we look at the history of the Liberal Party, they were responsible for publishing the Cannabis Law in October 2018.  From this, we can see that they have a lot of supporters agreeing on the establishment and have collected positive responses. 
+
+
+In the recent four years, Canada's refugee policy has been front and center The political parties have taken action and try to fix the systems and work on resettling refugees. To see if the policy of accepting more refugees would affect the Liberal party election, we plotted figure 5. From figure 5, we can see that there is only a relatively small portion of people choosing 'disagree'. And there are approximately 21% of our samples who voted for Liberal Party, disagreed with accepting more refugees to Canada. People's attitudes on refugees seem to break down along party lines. Voters who vote for New Democratic Party and Green Party are most opened to the policy, according to table 1. Table 1 displays that there are only $18\%$ and $15\%$ of NDP and Green Party voters disagreed with the idea. However, the percentage of disagreement among all parties is very similar, and the Liberal party still has the most votes(Noted that this data is stimulated according the result in 2019). Hence, the idea of admitting more refugees doesn't largely affect the election result downward, on the contrary, it may attract more voters for the Liberal Party because of high social acceptability. 
+
+
+# Weaknesses and Next Steps
+
+Perhaps there are a few weaknesses appear in this analysis. First, for the gender question in the survey, we only have two choices(male/female). Some participants may not willing to answer it for several reasons. Second, some of our questions are conductive, such as marijuana issue and refugees issue. These kind of questions are obviously point to some party and likely to receive biased responses. Third, our analysis lack of quantitative variables. That makes our report hard to observe tendency.
+
+What comes next is to make the choices of the survey more accurate(e.g. Add others/tend no to tell in gender question). Additionally, try to minimize the conductivity of the questions and be fair to all choices. Finally, add more numerical variables(e.g. Adding question such as age or average income). Use more variety of graphs to generate the report.
+
+
+\newpage
+
+# Appendix
+
+```{r,eval=FALSE}
+set.seed(123456)
+#Are you eligible and registered to vote at your current address you living at?
+if.eligible <- rbernoulli(1000, p = 0.95) 
+if.eligible <- ifelse(if.eligible == TRUE, 'Yes','No')
+```
+
+```{r,eval=FALSE}
 #Q2 What is your gender?
 Sex <- rbernoulli(1000, p = 0.5) 
 Sex <- ifelse(Sex == TRUE, 'Male','Female')
 
 ```
 
-```{r}
+```{r,eval=FALSE}
 #Q3 What is the highest level of education you have completed?
 #https://www12.statcan.gc.ca/census-recensement/2016/dp-pd/hlt-fst/edu-sco/Table.cfm?Lang=E&T=11&Geo=00&SP=1&view=2&age=2&sex=1
 edu <- c("No certificate","less than high school degree", "high school degree or equivalent", "non-university certificate or diploma below bachelor level", "bachelor degree or highter")
@@ -58,21 +252,22 @@ data[data$if.eligible == 'No', "edu"] <- edu.no
 
 
 
-```{r}
+```{r,eval=FALSE}
 # Q4 Do you think marijuana legalization should be allowed?
 # https://abacusdata.ca/canadians-are-ready-for-legal-cannabis/
-marijuana <- c("Completely agree","somewhat agree", "neutrally", "somewhat disagree","completely disagree")
-marijuana <-sample(marijuana,size=1000,prob=c(0.25,0.21,0.24,0.12,0.18),replace=TRUE)
+marijuana <- c("agree","disagree")
+marijuana <-sample(marijuana,size=1000,prob=c(0.7,0.3),replace=TRUE)
 ```
 
-```{r}
+```{r,eval=FALSE}
 #Q5 In general, what do you think about loosened the rules for refugee?
 #https://www.cicnews.com/2019/04/majority-of-canadians-maintain-positive-views-of-immigration-new-survey-finds-0412240.html#gs.i5mh19
-refugee <- c("Completely agree","somewhat agree", "neutrally", "somewhat disagree","completely disagree")
-refugee<-sample(refugee,size=1000,replace=TRUE,prob=c(0.2,0.25,0.35,0.12,0.08))
+refugee <- c("agree", "neutrally", "disagree")
+refugee<-sample(refugee,size=1000,replace=TRUE,prob=c(0.45,0.35,0.2))
+
 ```
 
-```{r}
+```{r,eval=FALSE}
 #Q6 Do you think everyone should be permitted to possess guns? 
 data$Sex <- Sex
 data$Gun <- NA
@@ -83,34 +278,81 @@ Gun_data_male <- sample(Gun, n.male, replace = TRUE, prob = c(0.1, 0.9))
 Gun_data_female <- sample(Gun, n.female, replace = TRUE, prob = c(0.05, 0.95))
 data[data$Sex == 'Male', "Gun"] <- Gun_data_male
 data[data$Sex == 'Female', "Gun"] <- Gun_data_female
-
-ggplot(data, aes(x = Sex, fill = Gun)) + geom_bar()
+#ggplot(data, aes(x = Sex, fill = Gun)) + geom_bar()
 ```
 
-```{r}
+```{r,eval=FALSE}
 #Q7 Do you agree with environmental safety is one of the priorities to Canada?
 Env <- c("Completely agree", "Somewhat agree", "Neutral", "Somewhat disagree", "Compeletely disagree")
 Env_data <- sample(Env, 1000, replace = TRUE, prob = c(0.6, 0.2, 0.1, 0.05, 0.05))
 ```
 
 
-```{r}
+```{r,eval=FALSE}
 #Q8 Which party are you going to vote on Election Day?
-party = c("Liberal Party", "NDP-New Democratic Party", "People's Party", "Green Party", "Conservative Party")
+party = c("Liberal Party", "NDP-New Democratic Party", "Peoples Party", "Green Party", "Conservative Party")
 # simulate the choice of vote using string
 data$vote = sample(party, size = 1000, replace=TRUE, prob = c(0.415, 0.168, 0.016,0.062, 0.332))
 ```
 
-```{r}
+```{r,eval=FALSE}
 data$marijuana <- marijuana
 data$refugee <- refugee
 data=subset(data,if.eligible=="Yes")
-
-ggplot(data, aes(x = if.eligible,fill=edu)) + geom_bar()+ ggtitle("Figure 1")
-ggplot(data, aes(marijuana)) +
-  geom_bar(fill = "#4073D1AF") + ggtitle("Social acceptability on Cannabis legalization") 
-ggplot(data, aes(refugee)) +
-  geom_bar(fill = "#8473A4AB") + ggtitle("Canadian social acceptability on accepting more refugees")
-ggplot(data, aes(x = vote ,fill=marijuana)) + geom_bar()+ ggtitle("Figure 1")
+glimpse(data)
 ```
+
+
+```{r,eval=FALSE}
+#creating table
+agree.liberal=nrow(data[data$refugee == 'agree'&data$vote == 'Liberal Party',])
+neutrally.liberal=nrow(data[data$refugee == 'neutrally'&data$vote == 'Liberal Party',])
+disagree.liberal=nrow(data[data$refugee == 'disagree'&data$vote == 'Liberal Party',])
+
+agree.conser=nrow(data[data$refugee == 'agree'&data$vote == 'Conservative Party',])
+neutrally.conser=nrow(data[data$refugee == 'neutrally'&data$vote == 'Conservative Party',])
+disagree.conser=nrow(data[data$refugee == 'disagree'&data$vote == 'Conservative Party',])
+
+agree.NDP=nrow(data[data$refugee == 'agree'&data$vote == 'NDP-New Democratic Party',])
+neutrally.NDP=nrow(data[data$refugee == 'neutrally'&data$vote == 'NDP-New Democratic Party',])
+disagree.NDP=nrow(data[data$refugee == 'disagree'&data$vote == 'NDP-New Democratic Party',])
+
+agree.Green=nrow(data[data$refugee == 'agree'&data$vote == 'Green Party',])
+neutrally.Green=nrow(data[data$refugee == 'neutrally'&data$vote == 'Green Party',])
+disagree.Green=nrow(data[data$refugee == 'disagree'&data$vote == 'Green Party',])
+
+agree.Peoples=nrow(data[data$refugee == 'agree'&data$vote == "Peoples Party",])
+neutrally.Peoples=nrow(data[data$refugee == 'neutrally'&data$vote == "Peoples Party",])
+disagree.Peoples=nrow(data[data$refugee == 'disagree'&data$vote == 'Peoples Party',])
+
+liberal = c(agree.liberal,neutrally.liberal,disagree.liberal) 
+Conservative = c(agree.conser,neutrally.conser,disagree.conser)
+NDP = c(agree.NDP,neutrally.NDP,disagree.NDP)
+Green = c(agree.Green,neutrally.Green,disagree.Green)
+People = c(agree.Peoples,neutrally.Peoples,disagree.Peoples)
+attitude = c("Agree","Neutrally","Disagree")
+a= round(84/(178+134+84),2)
+b= round(71/(118+143+71),2)
+c= round(27/(81+46+27),2)
+d= round(8/(24+20+8),2)
+e = round(4/(12),2)
+percet.disagree <- c("% of disagree",a,b,c,d,e)
+refugee.party <- data.frame(attitude,liberal,Conservative,NDP,Green,People)
+refugee.party<- rbind(refugee.party,percet.disagree)
+```
+
+```{r,eval=FALSE}
+ggplot(data, aes(x = if.eligible,fill=edu)) + geom_bar()+ ggtitle("Figure1 education levels of survey participants")
+a= ggplot(data, aes(marijuana)) +
+  geom_bar(fill = "#4073D1AF") + ggtitle("Figure 2") 
+b= ggplot(data, aes(refugee)) +
+  geom_bar(fill = "#8473A4AB") + ggtitle("Figure 3")
+ggarrange(a, b + font("x.text", size = 10),
+                    ncol = 2, nrow = 1)
+ggplot(data, aes(x = vote ,fill=marijuana)) + geom_bar()+ ggtitle("Figure4:Parties votes with distribution of social acceptability on marijuana ")
+ggplot(data, aes(x = vote ,fill=refugee)) + geom_bar()+ ggtitle("Figure5: Parties votes with distribution of social acceptability on refugees")
+knitr::kable(refugee.party,caption = "Table1")
+```
+
+
 
